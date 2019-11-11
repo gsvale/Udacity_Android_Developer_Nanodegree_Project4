@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="widget_size">200dp</dimen>
+    <dimen name="widget_margin">8dp</dimen>
+    <dimen name="recipe_widget_height">100dp</dimen>
+    <dimen name="recipe_widget_width">60dp</dimen>
+    <dimen name="recipe_widget_margin">10dp</dimen>
+    <dimen name="recipe_widget_image_size">40dp</dimen>
+    <dimen name="recipe_item_height">150dp</dimen>
+    <dimen name="recipe_item_margin">25dp</dimen>
+    <dimen name="recipe_item_image_size">75dp</dimen>
+    <dimen name="step_list_view_width">15dp</dimen>
+    <dimen name="step_item_height">150dp</dimen>
+    <dimen name="step_item_margin">25dp</dimen>
+    <dimen name="step_item_margin_top">50dp</dimen>
+    <dimen name="step_item_image_size">75dp</dimen>
+    <dimen name="view_step_margin">25dp</dimen>
+    <dimen name="view_step_margin_padding_15">15dp</dimen>
+    <dimen name="view_step_button_width">115dp</dimen>
+    <dimen name="view_step_button_padding">5dp</dimen>
+
+    <dimen name="general_text_size_13">13sp</dimen>
+    <dimen name="general_text_size_18">18sp</dimen>
+    <dimen name="general_text_size_20">20sp</dimen>
+    <dimen name="general_text_size_22">22sp</dimen>
+
+</resources>

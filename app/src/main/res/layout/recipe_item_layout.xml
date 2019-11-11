@@ -1,0 +1,56 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/recipe_item_height"
+        android:layout_margin="@dimen/recipe_item_margin"
+        android:background="@color/colorPrimaryDark"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/recipe_image_iv"
+            android:layout_width="@dimen/recipe_item_image_size"
+            android:layout_height="@dimen/recipe_item_image_size"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/recipe_item_margin"
+            android:layout_marginLeft="@dimen/recipe_item_margin"
+            android:layout_marginEnd="@dimen/recipe_item_margin"
+            android:layout_marginRight="@dimen/recipe_item_margin"
+            android:contentDescription="@string/recipe_image"
+            android:src="@drawable/ic_recipe_icon" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_marginEnd="@dimen/recipe_item_margin"
+            android:layout_marginRight="@dimen/recipe_item_margin"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/recipe_name_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Recipe Name"
+                android:gravity="center"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold"
+                android:textSize="@dimen/general_text_size_22"
+                />
+
+            <TextView
+                android:id="@+id/recipe_servings_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Recipe Servings: 6"
+                android:textColor="@color/colorWhite"
+                android:textStyle="normal"
+                android:textSize="@dimen/general_text_size_18"
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</layout>

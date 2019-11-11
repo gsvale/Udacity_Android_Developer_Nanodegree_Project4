@@ -1,0 +1,77 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/view_step_margin"
+            android:orientation="vertical"
+            android:weightSum="3">
+
+            <FrameLayout
+                android:id="@+id/player_view_fl"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1.5">
+
+                <ImageView
+                    android:id="@+id/player_default_error_iv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_default_step_image"
+                    android:visibility="gone" />
+
+                <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+                    android:id="@+id/player_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="visible"
+                    app:default_artwork="@drawable/ic_default_step_image"
+                    app:use_artwork="true">
+
+                </com.google.android.exoplayer2.ui.SimpleExoPlayerView>
+
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="@dimen/view_step_margin"
+                android:layout_weight="1.5"
+                android:background="@color/colorPrimary"
+                android:orientation="vertical"
+                android:padding="@dimen/view_step_margin_padding_15">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/view_step_margin_padding_15"
+                    android:gravity="center"
+                    android:text="@string/instructions"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/general_text_size_20"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/step_description_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/general_text_size_18"
+                    android:textStyle="normal" />
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

@@ -1,0 +1,95 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/recipe_step_ll"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/step_item_height"
+            android:layout_margin="@dimen/step_item_margin"
+            android:background="@color/colorPrimaryDark"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:layout_marginStart="@dimen/step_item_margin"
+                android:layout_marginLeft="@dimen/step_item_margin"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/recipe_step_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/general_text_size_22"
+                    android:textStyle="bold"
+                    tools:text="Recipe Step" />
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/step_image_iv"
+                android:layout_width="@dimen/step_item_image_size"
+                android:layout_height="@dimen/step_item_image_size"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/step_item_margin"
+                android:layout_marginLeft="@dimen/step_item_margin"
+                android:layout_marginEnd="@dimen/step_item_margin"
+                android:layout_marginRight="@dimen/step_item_margin"
+                android:contentDescription="@string/recipe_step"
+                android:src="@drawable/ic_step_icon" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/recipe_ingredients_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/step_item_margin"
+            tools:visibility="gone"
+            android:background="@color/colorPrimaryDark"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/recipe_ingredients_label_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="@dimen/step_item_margin"
+                android:layout_marginStart="@dimen/step_item_margin"
+                android:layout_marginLeft="@dimen/step_item_margin"
+                android:layout_marginEnd="@dimen/step_item_margin"
+                android:layout_marginRight="@dimen/step_item_margin"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/general_text_size_22"
+                android:textStyle="bold"
+                android:text="@string/recipe_ingredients" />
+
+            <TextView
+                android:id="@+id/recipe_ingredients_value_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/step_item_margin_top"
+                android:layout_marginBottom="@dimen/step_item_margin"
+                android:layout_marginStart="@dimen/step_item_margin"
+                android:layout_marginLeft="@dimen/step_item_margin"
+                android:layout_marginEnd="@dimen/step_item_margin"
+                android:layout_marginRight="@dimen/step_item_margin"
+                android:gravity="center"
+                android:textColor="@color/colorWhite"
+                android:textStyle="normal"
+                android:textSize="@dimen/general_text_size_18"
+                />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</layout>

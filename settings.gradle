@@ -1,0 +1,2 @@
+include ':app'
+rootProject.name='Udacity_Android_Developer_Nanodegree_Project4'

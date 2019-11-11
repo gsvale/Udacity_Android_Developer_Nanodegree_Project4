@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Udacity_Android_Developer_Nanodegree_Project4</string>
+    <string name="baking_time">Baking Time</string>
+    <string name="no_internet_connection">No Internet connection!</string>
+    <string name="error_loading">Error loading!</string>
+    <string name="recipe_image">Recipe image</string>
+    <string name="recipe_step">Recipe step</string>
+    <string name="servings">Servings: %d</string>
+    <string name="recipe_data_error_message">Recipe data not available</string>
+    <string name="step_data_error_message">Step data not available</string>
+    <string name="recipe_ingredients">Recipe Ingredients:</string>
+    <string name="quantity">Quantity: %s</string>
+    <string name="measure">Measure: %s</string>
+    <string name="instructions">Instructions:</string>
+    <string name="previous_step">Previous\nStep</string>
+    <string name="next_step">Next\nStep</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+
+</resources>
