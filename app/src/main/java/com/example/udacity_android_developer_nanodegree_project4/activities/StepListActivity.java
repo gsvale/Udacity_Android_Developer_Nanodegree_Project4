@@ -1,5 +1,6 @@
 package com.example.udacity_android_developer_nanodegree_project4.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentManager;
@@ -7,7 +8,10 @@ import androidx.fragment.app.FragmentManager;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.OrientationEventListener;
 import android.widget.Toast;
 
 import com.example.udacity_android_developer_nanodegree_project4.R;
@@ -28,6 +32,8 @@ public class StepListActivity extends AppCompatActivity implements StepListAdapt
 
     private boolean isTablet = false;
 
+    private StepListFragment stepListFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,11 +45,24 @@ public class StepListActivity extends AppCompatActivity implements StepListAdapt
         int orientation = getResources().getConfiguration().orientation;
 
         // If tablet and orientation portrait, force to use landscape
-        if (isTablet && orientation == Configuration.ORIENTATION_PORTRAIT) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        if (isTablet && (orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT || orientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE)) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
             return;
         }
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
 
+        if(isTablet){
+            OrientationEventListener listener = new OrientationEventListener(this, SensorManager.SENSOR_DELAY_NORMAL) {
+                @Override
+                public void onOrientationChanged(int orientation) {
+                    if(orientation == 90){
+                        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+                    }
+                }
+            };
+            listener.canDetectOrientation();
+            listener.enable();
+        }
 
         // Set DataBinding instance
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_step_list);
@@ -65,18 +84,24 @@ public class StepListActivity extends AppCompatActivity implements StepListAdapt
         // Set title as Recipe name
         setTitle(mRecipe.getName());
 
-        // Create a new StepListFragment
-        StepListFragment stepListFragment = new StepListFragment(mRecipe);
+        // Create fragment if savedInstanceState ir fragment are null
+        if (savedInstanceState == null || stepListFragment == null) {
 
-        // Get SupportFragmentManager
-        FragmentManager fragmentManager = getSupportFragmentManager();
 
-        // Add fragment to container in transaction
-        fragmentManager.beginTransaction()
-                .add(R.id.fragment_list_container_fl, stepListFragment)
-                .commit();
+            // Create a new StepListFragment
+            stepListFragment = StepListFragment.newInstance(mRecipe);
+
+            // Get SupportFragmentManager
+            FragmentManager fragmentManager = getSupportFragmentManager();
+
+            // Add fragment to container in transaction
+            fragmentManager.beginTransaction()
+                    .add(R.id.fragment_list_container_fl, stepListFragment)
+                    .commit();
+        }
 
     }
+
 
     // Method to close detail activity ans show error toast message
     private void closeActivity() {
@@ -91,12 +116,12 @@ public class StepListActivity extends AppCompatActivity implements StepListAdapt
         // If  tablet show in this activity ViewStepFragment on the right, or else init ViewStepActivity if phone being used
         if (isTablet) {
             // Create a new ViewStepFragment
-            ViewStepFragment headFragment = ViewStepFragment.newInstance(mRecipe, position);
+            ViewStepFragment viewStepFragment = ViewStepFragment.newInstance(mRecipe, position);
             // Get SupportFragmentManager
             FragmentManager fragmentManager = getSupportFragmentManager();
             // Replace current fragment, with new fragment to container in transaction
             fragmentManager.beginTransaction()
-                    .replace(R.id.fragment_detail_container_fl, headFragment)
+                    .replace(R.id.fragment_detail_container_fl, viewStepFragment)
                     .commit();
         } else {
             Intent recipeIntent = new Intent(this, ViewStepActivity.class);

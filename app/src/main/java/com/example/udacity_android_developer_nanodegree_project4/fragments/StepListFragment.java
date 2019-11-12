@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -35,8 +36,13 @@ public class StepListFragment extends Fragment {
 
     private StepListAdapter.OnStepSelectedListener mListener;
 
-    public StepListFragment(Recipe recipe) {
-        mRecipe = recipe;
+
+    public static StepListFragment newInstance(Recipe recipe) {
+        Bundle args = new Bundle();
+        args.putParcelable(Recipe.RECIPE_TAG, recipe);
+        StepListFragment f = new StepListFragment();
+        f.setArguments(args);
+        return f;
     }
 
     // Attach activity to fragment and set listener to step item click
@@ -48,6 +54,17 @@ public class StepListFragment extends Fragment {
         } else {
             throw new ClassCastException(context.toString());
         }
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Get from bundle recipe object
+        if (getArguments() != null) {
+            mRecipe = getArguments().getParcelable(Recipe.RECIPE_TAG);
+        }
+
     }
 
     @Override

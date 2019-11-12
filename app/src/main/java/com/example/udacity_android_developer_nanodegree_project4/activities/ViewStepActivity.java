@@ -18,10 +18,13 @@ import static com.example.udacity_android_developer_nanodegree_project4.activiti
 
 public class ViewStepActivity extends AppCompatActivity implements ViewStepFragment.OnViewStepButtonClickListener {
 
+
     // Recipe Item
     private Recipe mRecipe;
 
     ActivityViewStepBinding mBinding;
+
+    private ViewStepFragment viewStepFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,11 +51,11 @@ public class ViewStepActivity extends AppCompatActivity implements ViewStepFragm
         // Set title as Recipe name
         setTitle(mRecipe.getName());
 
-        // Create fragment if savedInstanceState is null
-        if (savedInstanceState == null) {
+        // Create fragment if savedInstanceState ir fragment are null
+        if (savedInstanceState == null || viewStepFragment == null) {
 
             // Create a new ViewStepFragment
-            ViewStepFragment viewStepFragment = ViewStepFragment.newInstance(mRecipe, stepPosition);
+            viewStepFragment = ViewStepFragment.newInstance(mRecipe, stepPosition);
 
             // Get SupportFragmentManager
             FragmentManager fragmentManager = getSupportFragmentManager();
@@ -77,7 +80,7 @@ public class ViewStepActivity extends AppCompatActivity implements ViewStepFragm
     public void onButtonClickSelected(int position) {
 
         // Create a new ViewStepFragment
-        ViewStepFragment viewStepFragment = ViewStepFragment.newInstance(mRecipe, position);
+        viewStepFragment = ViewStepFragment.newInstance(mRecipe, position);
 
         // Get SupportFragmentManager
         FragmentManager fragmentManager = getSupportFragmentManager();
