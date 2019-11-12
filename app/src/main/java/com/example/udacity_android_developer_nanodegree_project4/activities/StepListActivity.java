@@ -84,9 +84,12 @@ public class StepListActivity extends AppCompatActivity implements StepListAdapt
         // Set title as Recipe name
         setTitle(mRecipe.getName());
 
-        // Create fragment if savedInstanceState ir fragment are null
-        if (savedInstanceState == null || stepListFragment == null) {
+        Log.d("TESTE"," ---> " + savedInstanceState);
+        Log.d("TESTE"," ---> " + stepListFragment);
 
+        // Create fragment if savedInstanceState ir fragment are null
+        if (savedInstanceState == null
+                || getSupportFragmentManager().findFragmentById(R.id.fragment_list_container_fl) == null) {
 
             // Create a new StepListFragment
             stepListFragment = StepListFragment.newInstance(mRecipe);

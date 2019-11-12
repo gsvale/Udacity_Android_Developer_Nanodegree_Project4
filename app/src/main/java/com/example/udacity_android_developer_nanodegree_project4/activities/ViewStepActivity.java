@@ -52,7 +52,8 @@ public class ViewStepActivity extends AppCompatActivity implements ViewStepFragm
         setTitle(mRecipe.getName());
 
         // Create fragment if savedInstanceState ir fragment are null
-        if (savedInstanceState == null || viewStepFragment == null) {
+        if (savedInstanceState == null
+                || getSupportFragmentManager().findFragmentById(R.id.fragment_detail_container_fl) == null) {
 
             // Create a new ViewStepFragment
             viewStepFragment = ViewStepFragment.newInstance(mRecipe, stepPosition);
