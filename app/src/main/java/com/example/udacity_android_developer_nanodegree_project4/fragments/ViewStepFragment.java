@@ -105,8 +105,17 @@ public class ViewStepFragment extends Fragment implements ExoPlayer.EventListene
                              Bundle savedInstanceState) {
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_view_step, container, false);
 
+        // Get current screen orientation
+        int orientation = getResources().getConfiguration().orientation;
+
+        // Set fullscreen player if landscape orientation, and portrait view if orientation portrait
+        if (!isTablet && orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            showVideoFullScreen();
+        }
+
+
         // Hide/Show buttons depending of step position
-        if(!isTablet) {
+        if (!isTablet) {
 
             if (mStepPosition == 0) {
                 mBinding.previousStepBt.setVisibility(View.INVISIBLE);
@@ -163,6 +172,7 @@ public class ViewStepFragment extends Fragment implements ExoPlayer.EventListene
         return mBinding.getRoot();
     }
 
+
     @Override
     public void onDestroyView() {
         releasePlayer();
@@ -180,17 +190,14 @@ public class ViewStepFragment extends Fragment implements ExoPlayer.EventListene
         super.onConfigurationChanged(newConfig);
 
         // If tablet, just return
-        if(isTablet){
-           return;
+        if (isTablet) {
+            return;
         }
 
         // Checking the orientation of the screen
         // Set fullscreen player if landscape orientation, and portrait view if orientation portrait
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            ViewGroup.LayoutParams params = mBinding.playerViewFl.getLayoutParams();
-            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            params.height = ViewGroup.LayoutParams.MATCH_PARENT;
-            mBinding.playerViewFl.setLayoutParams(params);
+            showVideoFullScreen();
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             ViewGroup.LayoutParams params = mBinding.playerViewFl.getLayoutParams();
             params.width = ViewGroup.LayoutParams.MATCH_PARENT;
@@ -198,6 +205,13 @@ public class ViewStepFragment extends Fragment implements ExoPlayer.EventListene
             mBinding.playerViewFl.setLayoutParams(params);
         }
 
+    }
+
+    private void showVideoFullScreen() {
+        ViewGroup.LayoutParams params = mBinding.playerViewFl.getLayoutParams();
+        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+        mBinding.playerViewFl.setLayoutParams(params);
     }
 
     private void initPlayer(Uri uri) {
