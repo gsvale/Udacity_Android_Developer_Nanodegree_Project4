@@ -49,9 +49,9 @@ public class StepListActivity extends AppCompatActivity implements StepListAdapt
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
             return;
         }
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
 
         if(isTablet){
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
             OrientationEventListener listener = new OrientationEventListener(this, SensorManager.SENSOR_DELAY_NORMAL) {
                 @Override
                 public void onOrientationChanged(int orientation) {
