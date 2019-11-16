@@ -50,6 +50,7 @@ public class StepListActivity extends AppCompatActivity implements StepListAdapt
             return;
         }
 
+        // Manage orientation on tablet device
         if(isTablet){
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
             OrientationEventListener listener = new OrientationEventListener(this, SensorManager.SENSOR_DELAY_NORMAL) {
@@ -83,9 +84,6 @@ public class StepListActivity extends AppCompatActivity implements StepListAdapt
 
         // Set title as Recipe name
         setTitle(mRecipe.getName());
-
-        Log.d("TESTE"," ---> " + savedInstanceState);
-        Log.d("TESTE"," ---> " + stepListFragment);
 
         // Create fragment if savedInstanceState ir fragment are null
         if (savedInstanceState == null
