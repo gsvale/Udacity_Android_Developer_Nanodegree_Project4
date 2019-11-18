@@ -21,15 +21,6 @@ public class RecipesWidgetProvider extends AppWidgetProvider {
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.recipes_widget);
 
-        // Set the RecipesGridWidgetService intent to act as the adapter for the GridView in the widget layout
-        Intent intent = new Intent(context, RecipesGridWidgetService.class);
-        views.setRemoteAdapter(R.id.recipes_gv, intent);
-
-        // Set appIntent to go to StepListActivity, on click of item in adapter view from gridview list
-        Intent appIntent = new Intent(context, StepListActivity.class);
-        PendingIntent appPendingIntent = PendingIntent.getActivity(context, 0, appIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        views.setPendingIntentTemplate(R.id.recipes_gv, appPendingIntent);
-
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }

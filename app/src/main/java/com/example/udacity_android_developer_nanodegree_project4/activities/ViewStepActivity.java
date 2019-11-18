@@ -5,7 +5,11 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentManager;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.OrientationEventListener;
 import android.widget.Toast;
 
 import com.example.udacity_android_developer_nanodegree_project4.R;
@@ -51,7 +55,7 @@ public class ViewStepActivity extends AppCompatActivity implements ViewStepFragm
         // Set title as Recipe name
         setTitle(mRecipe.getName());
 
-        // Create fragment if savedInstanceState ir fragment are null
+        // Create fragment if savedInstanceState or fragment are null
         if (savedInstanceState == null
                 || getSupportFragmentManager().findFragmentById(R.id.fragment_detail_container_fl) == null) {
 

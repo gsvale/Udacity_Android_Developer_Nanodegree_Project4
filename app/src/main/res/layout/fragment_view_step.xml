@@ -19,7 +19,7 @@
                 android:layout_weight="1">
 
                 <ImageView
-                    android:id="@+id/player_default_error_iv"
+                    android:id="@+id/player_iv"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:visibility="gone"

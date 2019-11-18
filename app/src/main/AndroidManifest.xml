@@ -36,7 +36,6 @@
         </activity>
         <activity
             android:name=".activities.ViewStepActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
             android:launchMode="singleTask">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -52,9 +51,6 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/recipes_widget_info" />
         </receiver>
-        <service
-            android:name=".widget.RecipesGridWidgetService"
-            android:permission="android.permission.BIND_REMOTEVIEWS" />
     </application>
 
 </manifest>

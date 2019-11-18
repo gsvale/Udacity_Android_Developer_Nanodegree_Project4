@@ -9,6 +9,7 @@
     <string name="recipe_data_error_message">Recipe data not available</string>
     <string name="step_data_error_message">Step data not available</string>
     <string name="recipe_ingredients">Recipe Ingredients:</string>
+    <string name="ingredients">Ingredients:</string>
     <string name="quantity">Quantity: %s</string>
     <string name="measure">Measure: %s</string>
     <string name="instructions">Instructions:</string>

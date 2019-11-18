@@ -3,7 +3,9 @@ package com.example.udacity_android_developer_nanodegree_project4.utils;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.JsonReader;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.udacity_android_developer_nanodegree_project4.R;
@@ -15,6 +17,10 @@ import com.google.android.exoplayer2.upstream.DataSourceInputStream;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultDataSource;
 import com.google.android.exoplayer2.util.Util;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,200 +56,99 @@ public class JsonUtils {
     private static final String VIDEO_URL_TAG = "videoURL";
     private static final String THUMBNAIL_TAG = "thumbnailURL";
 
+    private static final String DATA_NOT_AVAILABLE = "Data not available";
 
-    // Method to fetch all recipes, with context as parameter
-    public static List<Recipe> fetchAllRecipes(Context context){
-        JsonReader reader;
+    // Parse Json data and create Recipe item objects from that information
+    static List<Recipe> extractRecipesDataFromJson(String jsonString) {
+
+        // If Json string is empty or null, return null
+        if (TextUtils.isEmpty(jsonString)) {
+            return null;
+        }
+
         List<Recipe> recipes = new ArrayList<>();
+
         try {
-            // Get JsonReader from Json file
-            reader = readJSONFile(context);
-            if(reader == null){
-                return null;
+
+
+            // Create Recipes Json Array
+            JSONArray recipesJsonArray = new JSONArray(jsonString);
+
+            int recipesJsonArraySize = recipesJsonArray.length();
+
+            // Parse all items of array results to create Recipe items
+            for (int i = 0; i < recipesJsonArraySize; i++) {
+
+                JSONObject recipeJsonObject = recipesJsonArray.getJSONObject(i);
+
+                int id = -1;
+                String name = null;
+                List<Ingredient> ingredients = new ArrayList<>();
+                List<Step> steps = new ArrayList<>();
+                int servings = -1;
+                String image = null;
+
+
+
+                // If no data is received, display a default message DATA_NOT_AVAILABLE
+                id = recipeJsonObject.optInt(ID_TAG, -1);
+                name = recipeJsonObject.optString(NAME_TAG, DATA_NOT_AVAILABLE);
+
+                JSONArray ingredientsArray = recipeJsonObject.getJSONArray(INGREDIENTS_TAG);
+                int ingredientsArraySize = ingredientsArray.length();
+
+                for(int j = 0; j < ingredientsArraySize; j++){
+
+                    JSONObject ingredientJsonObject = ingredientsArray.getJSONObject(j);
+
+                    String ingredient = null;
+                    Double quantity = null;
+                    String measure = null;
+
+                    ingredient = ingredientJsonObject.optString(INGREDIENT_TAG,DATA_NOT_AVAILABLE);
+                    quantity = ingredientJsonObject.optDouble(QUANTITY_TAG, -1);
+                    measure = ingredientJsonObject.optString(MEASURE_TAG,DATA_NOT_AVAILABLE);
+
+                    ingredients.add(new Ingredient(ingredient, quantity, measure));
+                }
+
+                JSONArray stepsArray = recipeJsonObject.getJSONArray(STEPS_TAG);
+                int stepsArraySize = stepsArray.length();
+
+                for(int k = 0; k < stepsArraySize; k++){
+
+                    JSONObject stepJsonObject = stepsArray.getJSONObject(k);
+
+                    int stepId = -1;
+                    String shortDescription = null;
+                    String description = null;
+                    String videoURL = null;
+                    String thumbnailURLURL = null;
+
+                    stepId = stepJsonObject.optInt(ID_TAG, -1);
+                    shortDescription = stepJsonObject.optString(SHORT_DESCRIPTION_TAG, DATA_NOT_AVAILABLE);
+                    description = stepJsonObject.optString(DESCRIPTION_TAG, DATA_NOT_AVAILABLE);
+                    videoURL = stepJsonObject.optString(VIDEO_URL_TAG, DATA_NOT_AVAILABLE);
+                    thumbnailURLURL = stepJsonObject.optString(THUMBNAIL_TAG, DATA_NOT_AVAILABLE);
+
+                    steps.add(new Step(stepId, shortDescription, description, videoURL, thumbnailURLURL));
+                }
+
+                servings = recipeJsonObject.optInt(SERVINGS_TAG, -1);
+                image = recipeJsonObject.optString(IMAGE_TAG, DATA_NOT_AVAILABLE);
+
+                // Create Recipe item with values parsed and extracted from Json data
+                Recipe recipeItem = new Recipe(id, name, ingredients, steps, servings, image);
+                recipes.add(recipeItem);
             }
-            reader.beginArray();
-            while (reader.hasNext()) {
-                recipes.add(readRecipeEntry(reader));
-            }
-            reader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+
+        } catch (JSONException e) {
+            Log.e(HttpUtils.LOG_TAG, "Problem parsing the movies JSON results", e);
         }
+
         return recipes;
+
     }
 
-
-    // Method to get JsonReader file, to get data about recipes from assets , with context as parameter
-    private static JsonReader readJSONFile(Context context) throws IOException {
-        AssetManager assetManager = context.getAssets();
-        String uri = null;
-
-        try {
-
-            // Check assets for json file, or else show toast error
-
-            String[] assetsList = assetManager.list("");
-
-            if(assetsList == null || assetsList.length == 0){
-                return null;
-            }
-
-            for (String asset : assetsList) {
-                if (asset.equals(JSON_FILE_TAG)) {
-                    uri = "asset:///" + asset;
-                }
-            }
-        } catch (IOException e) {
-            Toast.makeText(context, R.string.error_loading, Toast.LENGTH_LONG)
-                    .show();
-        }
-
-        String userAgent = Util.getUserAgent(context, BAKING_APP_TAG);
-        DataSource dataSource = new DefaultDataSource(context, null, userAgent, false);
-        DataSpec dataSpec = new DataSpec(Uri.parse(uri));
-        InputStream inputStream = new DataSourceInputStream(dataSource, dataSpec);
-
-        JsonReader reader;
-        try {
-            reader = new JsonReader(new InputStreamReader(inputStream, UTF8_TAG));
-        } finally {
-            Util.closeQuietly(dataSource);
-        }
-
-        return reader;
-    }
-
-    // Method to get json data to build Recipe items/objects, with JsonReader obtained
-    private static Recipe readRecipeEntry(JsonReader reader) {
-
-        int id = -1;
-        String name = null;
-        List<Ingredient> ingredients = new ArrayList<>();
-        List<Step> steps = new ArrayList<>();
-        int servings = -1;
-        String image = null;
-
-        // Get recipe from reader data
-        try {
-            reader.beginObject();
-            while (reader.hasNext()) {
-                String recipeItem = reader.nextName();
-                switch (recipeItem) {
-                    case ID_TAG:
-                        id = reader.nextInt();
-                        break;
-                    case NAME_TAG:
-                        name = reader.nextString();
-                        break;
-                    case INGREDIENTS_TAG:
-                        reader.beginArray();
-                        while (reader.hasNext()) {
-                            ingredients.add(readIngredientEntry(reader));
-                        }
-                        reader.endArray();
-                        break;
-                    case STEPS_TAG:
-                        reader.beginArray();
-                        while (reader.hasNext()) {
-                            steps.add(readStepEntry(reader));
-                        }
-                        reader.endArray();
-                        break;
-                    case SERVINGS_TAG:
-                        servings = reader.nextInt();
-                        break;
-                    case IMAGE_TAG:
-                        image = reader.nextString();
-                        break;
-                    default:
-                        break;
-                }
-            }
-            reader.endObject();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // return new recipe object with data extracted
-        return new Recipe(id, name , ingredients, steps, servings, image);
-    }
-
-    // Method to read Json reader from Ingredients data, and return a Ingredient object
-    private static Ingredient readIngredientEntry(JsonReader reader) {
-
-        String ingredient = null;
-        Double quantity = null;
-        String measure = null;
-
-        // Get ingredient from reader data
-        try {
-            reader.beginObject();
-            while (reader.hasNext()) {
-                String ingredientItem = reader.nextName();
-                switch (ingredientItem) {
-                    case INGREDIENT_TAG:
-                        ingredient = reader.nextString();
-                        break;
-                    case QUANTITY_TAG:
-                        quantity = reader.nextDouble();
-                        break;
-                    case MEASURE_TAG:
-                        measure = reader.nextString();
-                        break;
-                    default:
-                        break;
-                }
-            }
-            reader.endObject();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // return new ingredient object with data extracted
-        return new Ingredient(ingredient, quantity, measure);
-    }
-
-    // Method to read Json reader from Steps data, and return a Step object
-    private static Step readStepEntry(JsonReader reader) {
-
-        int id = -1;
-        String shortDescription = null;
-        String description = null;
-        String videoURL = null;
-        String thumbnailURLURL = null;
-
-        // Get step from reader data
-        try {
-            reader.beginObject();
-            while (reader.hasNext()) {
-                String stepItem = reader.nextName();
-                switch (stepItem) {
-                    case ID_TAG:
-                        id = reader.nextInt();
-                        break;
-                    case SHORT_DESCRIPTION_TAG:
-                        shortDescription = reader.nextString();
-                        break;
-                    case DESCRIPTION_TAG:
-                        description = reader.nextString();
-                        break;
-                    case VIDEO_URL_TAG:
-                        videoURL = reader.nextString();
-                        break;
-                    case THUMBNAIL_TAG:
-                        thumbnailURLURL = reader.nextString();
-                        break;
-                    default:
-                        break;
-                }
-            }
-            reader.endObject();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // return new step object with data extracted
-        return new Step(id, shortDescription, description, videoURL , thumbnailURLURL);
-    }
 
 }

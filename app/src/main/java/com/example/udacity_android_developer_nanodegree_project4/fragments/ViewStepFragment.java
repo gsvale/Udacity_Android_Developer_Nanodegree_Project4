@@ -1,6 +1,7 @@
 package com.example.udacity_android_developer_nanodegree_project4.fragments;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.BitmapFactory;
@@ -41,6 +42,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.squareup.picasso.Picasso;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -88,6 +90,8 @@ public class ViewStepFragment extends Fragment implements ExoPlayer.EventListene
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setRetainInstance(true);
 
         // Get from bundle recipe object and the position of the item selected
         if (getArguments() != null) {
@@ -151,38 +155,59 @@ public class ViewStepFragment extends Fragment implements ExoPlayer.EventListene
         // Set description from step
         mBinding.stepDescriptionTv.setText(mRecipe.getSteps().get(mStepPosition).getDescription());
 
-        // Get Step video url
-        String stepUri = "";
-        String videoUrl = mRecipe.getSteps().get(mStepPosition).getVideoURL();
-        String thumbnailUrl = mRecipe.getSteps().get(mStepPosition).getThumbnailURL();
-
         mBinding.playerView.setVisibility(View.VISIBLE);
-        mBinding.playerDefaultErrorIv.setVisibility(View.GONE);
-
-        // Use videoIri, if null, use Thumbnail uri, else step uri is null
-        if (!TextUtils.isEmpty(videoUrl)) {
-            stepUri = videoUrl;
-        } else if (!TextUtils.isEmpty(thumbnailUrl)) {
-            stepUri = thumbnailUrl;
-        }
-
-        // Initialize the player.
-        initPlayer(Uri.parse(stepUri));
+        mBinding.playerIv.setVisibility(View.GONE);
 
         return mBinding.getRoot();
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        displayStep();
+    }
+
 
     @Override
-    public void onDestroyView() {
-        releasePlayer();
-        super.onDestroyView();
+    public void onResume() {
+        super.onResume();
+        displayStep();
     }
 
     @Override
-    public void onDestroy() {
+    public void onPause() {
+        super.onPause();
         releasePlayer();
-        super.onDestroy();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        releasePlayer();
+    }
+
+    // Method that displays the video or image from Recipe Step
+    private void displayStep() {
+        String videoUrl = mRecipe.getSteps().get(mStepPosition).getVideoURL();
+        String thumbnailUrl = mRecipe.getSteps().get(mStepPosition).getThumbnailURL();
+
+        // Use videoIri, if null, use Thumbnail uri, else step uri is null
+        if (!TextUtils.isEmpty(videoUrl)) {
+            // Initialize the player.
+            initPlayer(Uri.parse(videoUrl));
+        } else if (!TextUtils.isEmpty(thumbnailUrl)) {
+            // Show image from recipe with aid of Picasso library
+            Picasso.get()
+                    .load(thumbnailUrl)
+                    .placeholder(R.drawable.ic_default_step_image)
+                    .error(R.drawable.ic_default_step_image)
+                    .into(mBinding.playerIv);
+            mBinding.playerView.setVisibility(View.GONE);
+            mBinding.playerIv.setVisibility(View.VISIBLE);
+        } else {
+            mBinding.playerView.setVisibility(View.GONE);
+            mBinding.playerIv.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -266,7 +291,7 @@ public class ViewStepFragment extends Fragment implements ExoPlayer.EventListene
     @Override
     public void onPlayerError(ExoPlaybackException error) {
         mBinding.playerView.setVisibility(View.GONE);
-        mBinding.playerDefaultErrorIv.setVisibility(View.VISIBLE);
+        mBinding.playerIv.setVisibility(View.VISIBLE);
     }
 
     @Override

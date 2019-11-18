@@ -77,6 +77,12 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.Re
         notifyDataSetChanged();
     }
 
+    // Clear data then notify
+    public void clearData() {
+        mRecipes.clear();
+        notifyDataSetChanged();
+    }
+
     public class RecipeListAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         RecipeItemLayoutBinding mBinding;

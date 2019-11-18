@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentManager;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -12,6 +14,8 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.OrientationEventListener;
+import android.view.View;
+import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import com.example.udacity_android_developer_nanodegree_project4.R;
@@ -19,8 +23,13 @@ import com.example.udacity_android_developer_nanodegree_project4.adapters.StepLi
 import com.example.udacity_android_developer_nanodegree_project4.databinding.ActivityStepListBinding;
 import com.example.udacity_android_developer_nanodegree_project4.fragments.StepListFragment;
 import com.example.udacity_android_developer_nanodegree_project4.fragments.ViewStepFragment;
+import com.example.udacity_android_developer_nanodegree_project4.objects.Ingredient;
 import com.example.udacity_android_developer_nanodegree_project4.objects.Recipe;
 import com.example.udacity_android_developer_nanodegree_project4.objects.Step;
+import com.example.udacity_android_developer_nanodegree_project4.widget.RecipesWidgetProvider;
+
+import java.text.DecimalFormat;
+import java.util.List;
 
 public class StepListActivity extends AppCompatActivity implements StepListAdapter.OnStepSelectedListener {
 
@@ -51,12 +60,12 @@ public class StepListActivity extends AppCompatActivity implements StepListAdapt
         }
 
         // Manage orientation on tablet device
-        if(isTablet){
+        if (isTablet) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
             OrientationEventListener listener = new OrientationEventListener(this, SensorManager.SENSOR_DELAY_NORMAL) {
                 @Override
                 public void onOrientationChanged(int orientation) {
-                    if(orientation == 90){
+                    if (orientation == 90) {
                         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
                     }
                 }
@@ -85,6 +94,11 @@ public class StepListActivity extends AppCompatActivity implements StepListAdapt
         // Set title as Recipe name
         setTitle(mRecipe.getName());
 
+        // Update widget with recipe info
+        if(mRecipe != null) {
+            updateWidget();
+        }
+
         // Create fragment if savedInstanceState ir fragment are null
         if (savedInstanceState == null
                 || getSupportFragmentManager().findFragmentById(R.id.fragment_list_container_fl) == null) {
@@ -101,6 +115,36 @@ public class StepListActivity extends AppCompatActivity implements StepListAdapt
                     .commit();
         }
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(mRecipe != null) {
+            updateWidget();
+        }
+    }
+
+    // Method that updates the Widget with recipe ingredients
+    private void updateWidget() {
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+        RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.recipes_widget);
+        ComponentName thisWidget = new ComponentName(this, RecipesWidgetProvider.class);
+        remoteViews.setTextViewText(R.id.recipe_name_tv, mRecipe.getName());
+        StringBuilder items = new StringBuilder();
+
+        // DecimalFormat for Quantity values in ingredients items
+        DecimalFormat format = new DecimalFormat();
+        format.setDecimalSeparatorAlwaysShown(false);
+
+        List<Ingredient> ingredients = mRecipe.getIngredients();
+        for (Ingredient ingredient : ingredients) {
+            items.append(ingredient.getIngredient()).append(", ");
+        }
+        remoteViews.setTextViewText(R.id.ingredients_items_tv, items);
+        remoteViews.setViewVisibility(R.id.ingredients_label_tv, View.VISIBLE);
+        remoteViews.setViewVisibility(R.id.ingredients_items_tv, View.VISIBLE);
+        appWidgetManager.updateAppWidget(thisWidget, remoteViews);
     }
 
 
