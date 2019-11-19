@@ -49,6 +49,9 @@ import com.squareup.picasso.Picasso;
  */
 public class ViewStepFragment extends Fragment implements ExoPlayer.EventListener {
 
+    private static final String CURRENT_POSITION_TAG = "CURRENT_POSITION";
+    private static final String GET_PLAY_WHEN_READY_TAG = "GET_PLAY_WHEN_READY";
+
     // Recipe Item
     private Recipe mRecipe;
 
@@ -61,6 +64,8 @@ public class ViewStepFragment extends Fragment implements ExoPlayer.EventListene
     private SimpleExoPlayer mExoPlayer = null;
 
     private boolean isTablet = false;
+
+    private Bundle mSavedInstanceState = null;
 
     // View Step button listener click interface
     public interface OnViewStepButtonClickListener {
@@ -91,7 +96,7 @@ public class ViewStepFragment extends Fragment implements ExoPlayer.EventListene
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setRetainInstance(true);
+        mSavedInstanceState = savedInstanceState;
 
         // Get from bundle recipe object and the position of the item selected
         if (getArguments() != null) {
@@ -116,7 +121,6 @@ public class ViewStepFragment extends Fragment implements ExoPlayer.EventListene
         if (!isTablet && orientation == Configuration.ORIENTATION_LANDSCAPE) {
             showVideoFullScreen();
         }
-
 
         // Hide/Show buttons depending of step position
         if (!isTablet) {
@@ -164,26 +168,45 @@ public class ViewStepFragment extends Fragment implements ExoPlayer.EventListene
     @Override
     public void onStart() {
         super.onStart();
-        displayStep();
+        if (Util.SDK_INT > 23) {
+            displayStep();
+        }
     }
 
 
     @Override
     public void onResume() {
         super.onResume();
-        displayStep();
+        if (Util.SDK_INT <= 23 || mExoPlayer == null) {
+            displayStep();
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        releasePlayer();
+
+        // Create mSavedInstanceState bundle and pass player values
+
+        if (mSavedInstanceState == null) {
+            mSavedInstanceState = new Bundle();
+        }
+
+        mSavedInstanceState.putLong(CURRENT_POSITION_TAG, mExoPlayer.getCurrentPosition());
+        mSavedInstanceState.putBoolean(GET_PLAY_WHEN_READY_TAG, mExoPlayer.getPlayWhenReady());
+        onSaveInstanceState(mSavedInstanceState);
+
+        if (Util.SDK_INT <= 23) {
+            releasePlayer();
+        }
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        releasePlayer();
+        if (Util.SDK_INT > 23) {
+            releasePlayer();
+        }
     }
 
     // Method that displays the video or image from Recipe Step
@@ -245,6 +268,7 @@ public class ViewStepFragment extends Fragment implements ExoPlayer.EventListene
             TrackSelector trackSelector = new DefaultTrackSelector();
             LoadControl loadControl = new DefaultLoadControl();
             mExoPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector, loadControl);
+
             mBinding.playerView.setPlayer(mExoPlayer);
 
             // Set the ExoPlayer.EventListener to this activity.
@@ -255,7 +279,19 @@ public class ViewStepFragment extends Fragment implements ExoPlayer.EventListene
             MediaSource mediaSource = new ExtractorMediaSource(uri, new DefaultDataSourceFactory(
                     getContext(), userAgent), new DefaultExtractorsFactory(), null, null);
             mExoPlayer.prepare(mediaSource);
-            mExoPlayer.setPlayWhenReady(true);
+
+            // Check mSavedInstanceState values, if not null
+            if (mSavedInstanceState != null) {
+                long currentPosition = mSavedInstanceState.getLong(CURRENT_POSITION_TAG, 0);
+                boolean isPlayWhenReady = mSavedInstanceState.getBoolean(GET_PLAY_WHEN_READY_TAG, true);
+                if (currentPosition != 0) {
+                    mExoPlayer.seekTo(currentPosition);
+                }
+                mExoPlayer.setPlayWhenReady(isPlayWhenReady);
+            } else {
+                mExoPlayer.setPlayWhenReady(true);
+            }
+
         }
     }
 
