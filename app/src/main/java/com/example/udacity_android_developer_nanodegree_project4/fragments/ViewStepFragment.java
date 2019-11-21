@@ -96,7 +96,7 @@ public class ViewStepFragment extends Fragment implements ExoPlayer.EventListene
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mSavedInstanceState = savedInstanceState;
+        setRetainInstance(true);
 
         // Get from bundle recipe object and the position of the item selected
         if (getArguments() != null) {
@@ -187,7 +187,6 @@ public class ViewStepFragment extends Fragment implements ExoPlayer.EventListene
         super.onPause();
 
         // Create mSavedInstanceState bundle and pass player values
-
         if (mSavedInstanceState == null) {
             mSavedInstanceState = new Bundle();
         }
